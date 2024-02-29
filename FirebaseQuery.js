@@ -95,20 +95,28 @@ class FirebaseQuery {
 
   /**
    * Method to insert multiple documents into the collection
-   * @param {Object[]} data - Array of data objects to be inserted
-   * @returns {Promise<{ids: string[], error: string}>} - Returns an array of inserted document IDs or an error
+   * @param {Object[]} data - Array of data to be inserted
+   * @returns {Promise<{ids: string[], error: string}>} - Returns the inserted document IDs or error
    */
   async insertMany(data) {
     try {
+      const batch = [];
       const ids = [];
 
       // Create a batched write operation
       for (const docData of data) {
-        const docRef = await addDoc(this.firestoreCollection, docData);
-        ids.push(docRef.id); // Extract and store the ID of the inserted document
+        batch.push(addDoc(this.firestoreCollection, docData));
       }
 
-      // Return the IDs of the inserted documents
+      // Execute the batched write operation
+      await Promise.all(batch);
+
+      // Get the IDs of the inserted documents
+      for (const docData of data) {
+        // Assuming each document has an 'id' field
+        ids.push(docData.id);
+      }
+
       return { ids };
     } catch (error) {
       return { error: error.message };
@@ -145,8 +153,26 @@ class FirebaseQuery {
       return { error: error.message };
     }
   }
-}
 
+  /**
+   * Method to retrieve a document by its ID
+   * @param {string} id - ID of the document to retrieve
+   * @returns {Promise<{data: Object, error: string}>} - Returns the document data or error
+   */
+  async getById(id) {
+    try {
+      const docRef = doc(this.firestoreCollection, id);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        return { data: { id: docSnap.id, ...docSnap.data() } };
+      } else {
+        return { error: 'Document does not exist' };
+      }
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
+}
 // (async () => {
 //   try {
 //     // Query: SELECT * FROM countries WHERE name = 'Albania'
