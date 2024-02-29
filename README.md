@@ -1,131 +1,159 @@
-## FirebaseQuery
+Here's the documentation for the `FirebaseQuery` class along with code examples for each method:
 
-FirebaseQuery is a simple utility class for handling Firestore operations in Firebase. It provides methods for querying, inserting, updating, and deleting documents in Firestore collections.
+---
 
-### Installation
+# FirebaseQuery Class Documentation
 
-You can install FirebaseQuery from npm using the following command:
+The `FirebaseQuery` class provides methods to interact with Firestore databases, including selecting, filtering, inserting, updating, deleting documents, and retrieving documents by their IDs.
 
-```bash
-npm install firebase-query
-```
+## Constructor
 
-### Usage
+### `constructor(DB: Firestore): FirebaseQuery`
 
-To use FirebaseQuery in your project, follow these steps:
+- Initializes a new instance of the `FirebaseQuery` class with a Firestore instance.
 
-1. Initialize Firebase in your project and obtain a Firestore instance.
-2. Import the FirebaseQuery class from the `firebase-query` package.
-3. Create an instance of FirebaseQuery with the Firestore instance.
-4. Chain methods to build and execute Firestore queries.
+#### Parameters
+- `DB` (Firestore): The Firestore instance to use for database operations.
 
-Here's an example of how to use FirebaseQuery:
+---
 
+## Methods
+
+### `select(collectionName: string, fields: string|string[] = '*'): FirebaseQuery`
+
+- Selects documents from the specified collection with optional fields to retrieve.
+
+#### Parameters
+- `collectionName` (string): Name of the collection to select documents from.
+- `fields` (string|string[], optional): Fields to retrieve. Pass '*' to select all fields. Default is '*'.
+
+#### Returns
+- `FirebaseQuery`: Returns the `FirebaseQuery` instance for chaining.
+
+#### Example
 ```javascript
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import FirebaseQuery from 'firebase-query';
-
-// Initialize Firebase app
-const app = initializeApp(FIREBASE_API);
-const DB = getFirestore(app);
-
-// Create an instance of FirebaseQuery
-const firebaseQuery = new FirebaseQuery(DB);
-
-// Example usage: Query documents from the 'countries' collection
-const { data, error } = await firebaseQuery
-  .select('countries') // Specify the collection name
-  .where('population', '>', 1000000) // Filter documents
-  .get(); // Execute the query
-
-if (error) {
-  console.error('Error:', error);
-} else {
-  console.log('Data:', data);
-}
+const { data, error } = await firebaseQuery.select('users').get();
 ```
 
-### Methods
+---
 
-#### `select(collectionName: string, fields: string[] | string = '*'): FirebaseQuery`
+### `where(field: string, operator: string, value: any): FirebaseQuery`
 
-Selects specific fields from the specified collection. If `fields` is '*', selects all fields. Returns a FirebaseQuery instance for chaining.
+- Filters documents based on a field, comparison operator, and value.
 
-Example:
+#### Parameters
+- `field` (string): Name of the field to filter.
+- `operator` (string): Comparison operator (e.g., '==', '>', '<').
+- `value` (any): Value to compare against.
+
+#### Returns
+- `FirebaseQuery`: Returns the `FirebaseQuery` instance for chaining.
+
+#### Example
 ```javascript
-firebaseQuery.select('countries', ['name', 'population']);
+const { data, error } = await firebaseQuery.select('users').where('age', '>', 30).get();
 ```
 
-#### `where(field: string, operator: string, value: any): FirebaseQuery`
+---
 
-Filters documents based on a field, operator, and value. Returns a FirebaseQuery instance for chaining.
+### `get(): Promise<{ data: Object[], error: string }>`
 
-Example:
+- Executes the query and fetches documents.
+
+#### Returns
+- `Promise<{ data: Object[], error: string }>`: Returns the fetched data or error.
+
+#### Example
 ```javascript
-firebaseQuery.where('population', '>', 1000000);
+const { data, error } = await firebaseQuery.select('users').get();
 ```
 
-#### `get(): Promise<{data: Object[], error: string}>`
+---
 
-Executes the query and fetches documents from Firestore. Returns an object containing the data array or an error message.
+### `insert(data: Object): Promise<{ id: string, error: string }>`
 
-Example:
+- Inserts a new document into the collection.
+
+#### Parameters
+- `data` (Object): Data to be inserted.
+
+#### Returns
+- `Promise<{ id: string, error: string }>`: Returns the inserted document ID or error.
+
+#### Example
 ```javascript
-const { data, error } = await firebaseQuery.get();
+const { id, error } = await firebaseQuery.select('users').insert({ name: 'John', age: 30 });
 ```
 
-#### `insert(data: Object): Promise<{id: string, error: string}>`
+---
 
-Inserts a new document into the collection. Returns an object containing the inserted document ID or an error message.
+### `insertMany(data: Object[]): Promise<{ ids: string[], error: string }>`
 
-Example:
+- Inserts multiple documents into the collection.
+
+#### Parameters
+- `data` (Object[]): Array of data to be inserted.
+
+#### Returns
+- `Promise<{ ids: string[], error: string }>`: Returns the inserted document IDs or error.
+
+#### Example
 ```javascript
-const { id, error } = await firebaseQuery.insert({ name: 'Germany', population: 83000000 });
+const { ids, error } = await firebaseQuery.select('users').insertMany([{ name: 'John' }, { name: 'Alice' }]);
 ```
 
-#### `insertMany(data: Object[]): Promise<{ids: string[], error: string}>`
+---
 
-Inserts multiple documents into the collection. Returns an object containing the inserted document IDs or an error message.
+### `update(id: string, data: Object): Promise<{ error: string }>`
 
-Example:
+- Updates an existing document in the collection.
+
+#### Parameters
+- `id` (string): ID of the document to update.
+- `data` (Object): Updated data.
+
+#### Returns
+- `Promise<{ error: string }>`: Returns an error message if any.
+
+#### Example
 ```javascript
-const { ids, error } = await firebaseQuery.insertMany([
-  { name: 'France', population: 67000000 },
-  { name: 'Italy', population: 60000000 },
-]);
+await firebaseQuery.update('USER_ID', { age: 40 });
 ```
 
-#### `update(id: string, data: Object): Promise<{error: string}>`
+---
 
-Updates an existing document in the collection. Returns an object containing an error message if any.
+### `delete(id: string): Promise<{ error: string }>`
 
-Example:
+- Deletes a document from the collection.
+
+#### Parameters
+- `id` (string): ID of the document to delete.
+
+#### Returns
+- `Promise<{ error: string }>`: Returns an error message if any.
+
+#### Example
 ```javascript
-await firebaseQuery.update('GermanyId', { population: 85000000 });
+await firebaseQuery.delete('USER_ID');
 ```
 
-#### `delete(id: string): Promise<{error: string}>`
+---
 
-Deletes a document from the collection by its ID. Returns an object containing an error message if any.
+### `getById(id: string): Promise<{ data: Object, error: string }>`
 
-Example:
+- Retrieves a document by its ID.
+
+#### Parameters
+- `id` (string): ID of the document to retrieve.
+
+#### Returns
+- `Promise<{ data: Object, error: string }>`: Returns the document data or error.
+
+#### Example
 ```javascript
-await firebaseQuery.delete('GermanyId');
+const { data, error } = await firebaseQuery.getById('USER_ID');
 ```
 
-#### `getById(id: string): Promise<{data: Object, error: string}>`
+---
 
-Retrieves a document by its ID. Returns an object containing the document data or an error message.
-
-Example:
-```javascript
-const { data, error } = await firebaseQuery.getById('GermanyId');
-```
-
-### Notes
-
-- Ensure you have initialized Firebase in your project and obtained a Firestore instance before using FirebaseQuery.
-- Make sure to handle errors appropriately when using asynchronous methods by checking the `error` property in the returned object.
-
-This concludes the documentation for FirebaseQuery. If you have any further questions or need assistance, feel free to reach out!
+This concludes the documentation for the `FirebaseQuery` class, providing an overview of its methods along with code examples demonstrating their usage.
