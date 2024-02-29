@@ -1,108 +1,131 @@
+## FirebaseQuery
 
-```markdown
-# FirebaseQuery
+FirebaseQuery is a simple utility class for handling Firestore operations in Firebase. It provides methods for querying, inserting, updating, and deleting documents in Firestore collections.
 
-FirebaseQuery is a JavaScript class that simplifies Firestore operations by providing easy-to-use methods for querying, inserting, updating, deleting, and retrieving documents by ID.
+### Installation
 
-## Installation
-
-To use FirebaseQuery in your project, you can install it via npm:
+You can install FirebaseQuery from npm using the following command:
 
 ```bash
 npm install firebase-query
 ```
 
-## Usage
+### Usage
 
-### Importing the Module
+To use FirebaseQuery in your project, follow these steps:
+
+1. Initialize Firebase in your project and obtain a Firestore instance.
+2. Import the FirebaseQuery class from the `firebase-query` package.
+3. Create an instance of FirebaseQuery with the Firestore instance.
+4. Chain methods to build and execute Firestore queries.
+
+Here's an example of how to use FirebaseQuery:
 
 ```javascript
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
 import FirebaseQuery from 'firebase-query';
+
+// Initialize Firebase app
+const app = initializeApp(FIREBASE_API);
+const DB = getFirestore(app);
+
+// Create an instance of FirebaseQuery
+const firebaseQuery = new FirebaseQuery(DB);
+
+// Example usage: Query documents from the 'countries' collection
+const { data, error } = await firebaseQuery
+  .select('countries') // Specify the collection name
+  .where('population', '>', 1000000) // Filter documents
+  .get(); // Execute the query
+
+if (error) {
+  console.error('Error:', error);
+} else {
+  console.log('Data:', data);
+}
 ```
 
-### Initializing FirebaseQuery
+### Methods
 
+#### `select(collectionName: string, fields: string[] | string = '*'): FirebaseQuery`
+
+Selects specific fields from the specified collection. If `fields` is '*', selects all fields. Returns a FirebaseQuery instance for chaining.
+
+Example:
 ```javascript
-const firebaseQuery = new FirebaseQuery('collectionName');
+firebaseQuery.select('countries', ['name', 'population']);
 ```
 
-### Selecting Documents
+#### `where(field: string, operator: string, value: any): FirebaseQuery`
 
+Filters documents based on a field, operator, and value. Returns a FirebaseQuery instance for chaining.
+
+Example:
 ```javascript
-// Select all documents
-const { data, error } = await firebaseQuery.select().get();
-
-// Select documents where a field matches a value
-const { data, error } = await firebaseQuery.select().where('fieldName', '==', 'value').get();
+firebaseQuery.where('population', '>', 1000000);
 ```
 
-### Querying Documents
+#### `get(): Promise<{data: Object[], error: string}>`
 
+Executes the query and fetches documents from Firestore. Returns an object containing the data array or an error message.
+
+Example:
 ```javascript
-// Perform advanced queries
-const { data, error } = await firebaseQuery.query().orderBy('fieldName').limit(10).get();
+const { data, error } = await firebaseQuery.get();
 ```
 
-### Inserting Documents
+#### `insert(data: Object): Promise<{id: string, error: string}>`
 
+Inserts a new document into the collection. Returns an object containing the inserted document ID or an error message.
+
+Example:
 ```javascript
-// Insert a single document
-const { id, error } = await firebaseQuery.insert({ field1: 'value1', field2: 'value2' });
+const { id, error } = await firebaseQuery.insert({ name: 'Germany', population: 83000000 });
+```
 
-// Insert multiple documents
+#### `insertMany(data: Object[]): Promise<{ids: string[], error: string}>`
+
+Inserts multiple documents into the collection. Returns an object containing the inserted document IDs or an error message.
+
+Example:
+```javascript
 const { ids, error } = await firebaseQuery.insertMany([
-  { field1: 'value1', field2: 'value2' },
-  { field1: 'value3', field2: 'value4' },
+  { name: 'France', population: 67000000 },
+  { name: 'Italy', population: 60000000 },
 ]);
 ```
 
-### Updating Documents
+#### `update(id: string, data: Object): Promise<{error: string}>`
 
+Updates an existing document in the collection. Returns an object containing an error message if any.
+
+Example:
 ```javascript
-// Update a document by ID
-const { error } = await firebaseQuery.update('documentId', { field: 'newValue' });
+await firebaseQuery.update('GermanyId', { population: 85000000 });
 ```
 
-### Deleting Documents
+#### `delete(id: string): Promise<{error: string}>`
 
+Deletes a document from the collection by its ID. Returns an object containing an error message if any.
+
+Example:
 ```javascript
-// Delete a document by ID
-const { error } = await firebaseQuery.delete('documentId');
+await firebaseQuery.delete('GermanyId');
 ```
 
-### Retrieving Document by ID
+#### `getById(id: string): Promise<{data: Object, error: string}>`
 
+Retrieves a document by its ID. Returns an object containing the document data or an error message.
+
+Example:
 ```javascript
-// Get a document by its ID
-const { data, error } = await firebaseQuery.getById('documentId');
-console.log(data);
+const { data, error } = await firebaseQuery.getById('GermanyId');
 ```
 
-## Examples
+### Notes
 
-Showcase usage examples and additional code snippets here.
+- Ensure you have initialized Firebase in your project and obtained a Firestore instance before using FirebaseQuery.
+- Make sure to handle errors appropriately when using asynchronous methods by checking the `error` property in the returned object.
 
-### Example 1: Selecting Documents
-
-```javascript
-const { data, error } = await firebaseQuery.select().get();
-console.log(data);
-```
-
-### Example 2: Inserting Documents
-
-```javascript
-const { id, error } = await firebaseQuery.insert({ field1: 'value1', field2: 'value2' });
-console.log(id);
-```
-
-## Contributing
-
-Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue on GitHub or submit a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
-
-This README.md file includes usage examples, explanations of each method, and instructions for contributing and licensing. If you have any further questions or need additional assistance, feel free to ask!
+This concludes the documentation for FirebaseQuery. If you have any further questions or need assistance, feel free to reach out!
