@@ -23,11 +23,11 @@ const DB = getFirestore(app);
 class FirebaseQuery {
   /**
    * Constructor to initialize FirebaseQuery with a collection name
-   * @param {string} collectionName - Name of the Firestore collection
+   * @param {string} DB - Name of the Firestore collection
    */
-  constructor(collectionName) {
-    this.collectionName = collectionName;
-    this.firestoreCollection = collection(DB, collectionName);
+  constructor(DB) {
+    this.db = DB;
+    this.firestoreCollection = null;
     this.firestoreQuery = null;
   }
 
@@ -36,12 +36,13 @@ class FirebaseQuery {
    * @param {string|string[]} [fields='*'] - Field(s) to select. Pass '*' to select all fields.
    * @returns {FirebaseQuery} - Returns the FirebaseQuery instance for chaining
    */
-  select(fields = '*') {
+  select(collectionName, fields = '*') {
     try {
       if (fields === '*') {
-        this.firestoreQuery = this.firestoreCollection;
+        this.firestoreCollection = collectionName;
+        this.firestoreQuery = collection(this.db, collectionName);
       } else {
-        this.firestoreQuery = query(this.firestoreCollection, ...fields);
+        this.firestoreQuery = query(collection(this.db, collectionName), ...fields);
       }
       return this;
     } catch (error) {
@@ -161,7 +162,7 @@ class FirebaseQuery {
    */
   async getById(id) {
     try {
-      const docRef = doc(this.firestoreCollection, id);
+      const docRef = doc(this.firestoreQuery, id);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         return { data: { id: docSnap.id, ...docSnap.data() } };
