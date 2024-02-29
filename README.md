@@ -1,9 +1,8 @@
-My apologies for missing the Query method. Here's the revised README.md file with the Query method included, along with example code snippets:
 
 ```markdown
 # FirebaseQuery
 
-FirebaseQuery is a JavaScript class that simplifies Firestore operations by providing easy-to-use methods for querying, inserting, updating, and deleting documents.
+FirebaseQuery is a JavaScript class that simplifies Firestore operations by providing easy-to-use methods for querying, inserting, updating, deleting, and retrieving documents by ID.
 
 ## Installation
 
@@ -71,6 +70,14 @@ const { error } = await firebaseQuery.update('documentId', { field: 'newValue' }
 const { error } = await firebaseQuery.delete('documentId');
 ```
 
+### Retrieving Document by ID
+
+```javascript
+// Get a document by its ID
+const { data, error } = await firebaseQuery.getById('documentId');
+console.log(data);
+```
+
 ## Examples
 
 Showcase usage examples and additional code snippets here.
@@ -98,4 +105,4 @@ Contributions are welcome! If you have any suggestions, bug reports, or feature 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 ```
 
-Feel free to customize the README file further based on your project's needs. If you have any more questions or need further assistance, please let me know!
+This README.md file includes usage examples, explanations of each method, and instructions for contributing and licensing. If you have any further questions or need additional assistance, feel free to ask!
