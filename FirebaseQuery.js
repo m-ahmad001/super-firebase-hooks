@@ -1,53 +1,41 @@
 import { initializeApp } from 'firebase/app';
 import {
-  collection,
-  query,
-  where,
-  getDocs,
   addDoc,
-  doc,
-  updateDoc,
+  collection,
   deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
   getFirestore,
+  query,
+  updateDoc,
+  where,
 } from 'firebase/firestore';
 import { FIREBASE_API } from '../config-global';
-import uuidv4 from 'src/utils/uuidv4';
-
-// Initialize Firebase app
-const app = initializeApp(FIREBASE_API);
-const DB = getFirestore(app);
 
 /**
  * FirebaseQuery class to handle Firestore operations
  */
 class FirebaseQuery {
   /**
-   * Constructor to initialize FirebaseQuery with a collection name
-   * @param {string} DB - Name of the Firestore collection
+   * Constructor to initialize FirebaseQuery with a Firestore instance
+   * @param {Firestore} firestoreInstance - Firestore instance
    */
-  constructor(DB) {
-    this.db = DB;
+  constructor(firestoreInstance) {
+    this.db = firestoreInstance;
     this.firestoreCollection = null;
     this.firestoreQuery = null;
   }
 
   /**
-   * Method to select specific fields from the collection
-   * @param {string|string[]} [fields='*'] - Field(s) to select. Pass '*' to select all fields.
+   * Method to select a collection
+   * @param {string} collectionName - Name of the collection
    * @returns {FirebaseQuery} - Returns the FirebaseQuery instance for chaining
    */
-  select(collectionName, fields = '*') {
-    try {
-      if (fields === '*') {
-        this.firestoreCollection = collectionName;
-        this.firestoreQuery = collection(this.db, collectionName);
-      } else {
-        this.firestoreQuery = query(collection(this.db, collectionName), ...fields);
-      }
-      return this;
-    } catch (error) {
-      throw new Error(error.message);
-    }
+  select(collectionName) {
+    this.firestoreCollection = collection(this.db, collectionName);
+    this.firestoreQuery = this.firestoreCollection;
+    return this;
   }
 
   /**
@@ -58,12 +46,8 @@ class FirebaseQuery {
    * @returns {FirebaseQuery} - Returns the FirebaseQuery instance for chaining
    */
   where(field, operator, value) {
-    try {
-      this.firestoreQuery = query(this.firestoreQuery, where(field, operator, value));
-      return this;
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    this.firestoreQuery = query(this.firestoreQuery, where(field, operator, value));
+    return this;
   }
 
   /**
@@ -101,22 +85,14 @@ class FirebaseQuery {
    */
   async insertMany(data) {
     try {
-      const batch = [];
       const ids = [];
 
       // Create a batched write operation
-      for (const docData of data) {
-        batch.push(addDoc(this.firestoreCollection, docData));
-      }
+      data.forEach(async (docData) => {
+        const docRef = await addDoc(this.firestoreCollection, docData);
 
-      // Execute the batched write operation
-      await Promise.all(batch);
-
-      // Get the IDs of the inserted documents
-      for (const docData of data) {
-        // Assuming each document has an 'id' field
-        ids.push(docData.id);
-      }
+        ids.push(docRef.id);
+      });
 
       return { ids };
     } catch (error) {
@@ -162,7 +138,7 @@ class FirebaseQuery {
    */
   async getById(id) {
     try {
-      const docRef = doc(this.firestoreQuery, id);
+      const docRef = doc(this.firestoreCollection, id);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         return { data: { id: docSnap.id, ...docSnap.data() } };
