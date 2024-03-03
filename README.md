@@ -117,7 +117,7 @@ const { ids, error } = await firebaseQuery.select('users').insertMany([{ name: '
 
 #### Example
 ```javascript
-await firebaseQuery.update('USER_ID', { age: 40 });
+await firebaseQuery.select("collection").update('USER_ID', { age: 40 });
 ```
 
 ---
@@ -151,7 +151,7 @@ await firebaseQuery.delete("collections",'USER_ID');
 
 #### Example
 ```javascript
-const { data, error } = await firebaseQuery.getById('USER_ID');
+const { data, error } = await firebaseQuery.select("collection").getById('USER_ID');
 ```
 
 ---
