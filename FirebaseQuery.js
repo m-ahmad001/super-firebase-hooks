@@ -121,9 +121,9 @@ class FirebaseQuery {
    * @param {string} id - ID of the document to delete
    * @returns {Promise<{error: string}>} - Returns an error message if any
    */
-  async delete(id) {
+  async delete(collection, id) {
     try {
-      const docRef = doc(this.firestoreCollection, id);
+      const docRef = doc(this.db, collection, id);
       await deleteDoc(docRef);
       return {};
     } catch (error) {

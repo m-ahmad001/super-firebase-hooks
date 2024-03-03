@@ -134,7 +134,7 @@ await firebaseQuery.update('USER_ID', { age: 40 });
 
 #### Example
 ```javascript
-await firebaseQuery.delete('USER_ID');
+await firebaseQuery.delete("collections",'USER_ID');
 ```
 
 ---
