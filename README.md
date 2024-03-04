@@ -1,4 +1,4 @@
-Sure, here's an example of a `README.md` file for the `superquery` wrapper:
+Sure, here's an updated `README.md` file with the new `where` method:
 
 ```markdown
 # superquery
@@ -14,7 +14,7 @@ npm install firebase@9
 2. Create a new file named `firebase.js` and import the `superquery` wrapper. Initialize it with your Firebase configuration and export it:
 ```javascript
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, query, getDocs, addDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { getFirestore, collection, query, where, getDocs, addDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import FirestoreWrapper from './superquery';
 
 const firebaseConfig = {
@@ -38,6 +38,17 @@ Select all documents from the `users` collection:
 import superquery from './firebase';
 
 const { data, error } = await superquery.select("users").get();
+console.log(data);
+```
+
+### Query documents
+
+Query documents from the `users` collection where the `age` field is greater than or equal to 18:
+
+```javascript
+import superquery from './firebase';
+
+const { data, error } = await superquery.select("users").where("age", ">=", 18).get();
 console.log(data);
 ```
 
@@ -79,4 +90,4 @@ console.log(error);
 `superquery` is released under the MIT License.
 ```
 
-You can customize this `README.md` file to fit your specific needs and add more examples if necessary.
+This updated `README.md` file includes an example of using the `where` method to query documents from a collection based on a specific field and operator. You can chain the `where` method after the `select` method to build your query, and then call the `get` method to execute the query and retrieve the results.
