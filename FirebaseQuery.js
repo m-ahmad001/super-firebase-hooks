@@ -20,13 +20,12 @@ class FirestoreWrapper {
   // Select documents
   async get() {
     try {
-      const q = query(this.collectionRef);
-      const querySnapshot = await getDocs(q);
-      let data = [];
-      querySnapshot.forEach((doc) => {
-        data.push({ ...doc.data(), id: doc.id });
-      });
-      return { data, error: null };
+     if (!this.queryRef) {
+      this.queryRef = query(this.collectionRef);
+    }
+    const querySnapshot = await getDocs(this.queryRef);
+    const data = querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    return { data, error: null };
     } catch (error) {
       console.error("Error getting documents: ", error);
       return { data: null, error };
