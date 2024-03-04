@@ -12,6 +12,10 @@ class FirestoreWrapper {
     this.collectionRef = collection(this.db, collectionName);
     return this;
   }
+  where(field, operator, value) {
+    this.queryRef = query(this.collectionRef, where(field, operator, value));
+    return this;
+  }
 
   // Select documents
   async get() {
