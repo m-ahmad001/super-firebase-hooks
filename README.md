@@ -1,159 +1,82 @@
-Here's the documentation for the `FirebaseQuery` class along with code examples for each method:
+Sure, here's an example of a `README.md` file for the `superquery` wrapper:
 
----
+```markdown
+# superquery
 
-# FirebaseQuery Class Documentation
+`superquery` is a simple wrapper around Firebase Firestore SDK version 9 that provides a chainable API for performing CRUD operations.
 
-The `FirebaseQuery` class provides methods to interact with Firestore databases, including selecting, filtering, inserting, updating, deleting documents, and retrieving documents by their IDs.
+## Installation
 
-## Constructor
-
-### `constructor(DB: Firestore): FirebaseQuery`
-
-- Initializes a new instance of the `FirebaseQuery` class with a Firestore instance.
-
-#### Parameters
-- `DB` (Firestore): The Firestore instance to use for database operations.
-
----
-
-## Methods
-
-### `select(collectionName: string, fields: string|string[] = '*'): FirebaseQuery`
-
-- Selects documents from the specified collection with optional fields to retrieve.
-
-#### Parameters
-- `collectionName` (string): Name of the collection to select documents from.
-- `fields` (string|string[], optional): Fields to retrieve. Pass '*' to select all fields. Default is '*'.
-
-#### Returns
-- `FirebaseQuery`: Returns the `FirebaseQuery` instance for chaining.
-
-#### Example
+1. Install Firebase SDK version 9 in your project:
+```
+npm install firebase@9
+```
+2. Create a new file named `firebase.js` and import the `superquery` wrapper. Initialize it with your Firebase configuration and export it:
 ```javascript
-const { data, error } = await firebaseQuery.select('users').get();
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, query, getDocs, addDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import FirestoreWrapper from './superquery';
+
+const firebaseConfig = {
+  // your Firebase config here
+};
+
+const superquery = new FirestoreWrapper(firebaseConfig);
+
+export default superquery;
 ```
 
----
+## Usage
 
-### `where(field: string, operator: string, value: any): FirebaseQuery`
+Import the `superquery` wrapper in your file and use it to perform CRUD operations:
 
-- Filters documents based on a field, comparison operator, and value.
+### Select documents
 
-#### Parameters
-- `field` (string): Name of the field to filter.
-- `operator` (string): Comparison operator (e.g., '==', '>', '<').
-- `value` (any): Value to compare against.
+Select all documents from the `users` collection:
 
-#### Returns
-- `FirebaseQuery`: Returns the `FirebaseQuery` instance for chaining.
-
-#### Example
 ```javascript
-const { data, error } = await firebaseQuery.select('users').where('age', '>', 30).get();
+import superquery from './firebase';
+
+const { data, error } = await superquery.select("users").get();
+console.log(data);
 ```
 
----
+### Insert a document
 
-### `get(): Promise<{ data: Object[], error: string }>`
+Insert a new document into the `users` collection:
 
-- Executes the query and fetches documents.
-
-#### Returns
-- `Promise<{ data: Object[], error: string }>`: Returns the fetched data or error.
-
-#### Example
 ```javascript
-const { data, error } = await firebaseQuery.select('users').get();
+import superquery from './firebase';
+
+const { error } = await superquery.select("users").insert({ name: 'Ahmad' });
+console.log(error);
 ```
 
----
+### Update a document
 
-### `insert(data: Object): Promise<{ id: string, error: string }>`
+Update a document in the `users` collection by its document ID:
 
-- Inserts a new document into the collection.
-
-#### Parameters
-- `data` (Object): Data to be inserted.
-
-#### Returns
-- `Promise<{ id: string, error: string }>`: Returns the inserted document ID or error.
-
-#### Example
 ```javascript
-const { id, error } = await firebaseQuery.select('users').insert({ name: 'John', age: 30 });
+import superquery from './firebase';
+
+const { error } = await superquery.select("users").update('docId', { name: 'John' });
+console.log(error);
 ```
 
----
+### Delete a document
 
-### `insertMany(data: Object[]): Promise<{ ids: string[], error: string }>`
+Delete a document in the `users` collection by its document ID:
 
-- Inserts multiple documents into the collection.
-
-#### Parameters
-- `data` (Object[]): Array of data to be inserted.
-
-#### Returns
-- `Promise<{ ids: string[], error: string }>`: Returns the inserted document IDs or error.
-
-#### Example
 ```javascript
-const { ids, error } = await firebaseQuery.select('users').insertMany([{ name: 'John' }, { name: 'Alice' }]);
+import superquery from './firebase';
+
+const { error } = await superquery.select("users").delete('docId');
+console.log(error);
 ```
 
----
+## License
 
-### `update(id: string, data: Object): Promise<{ error: string }>`
-
-- Updates an existing document in the collection.
-
-#### Parameters
-- `id` (string): ID of the document to update.
-- `data` (Object): Updated data.
-
-#### Returns
-- `Promise<{ error: string }>`: Returns an error message if any.
-
-#### Example
-```javascript
-await firebaseQuery.select("collection").update('USER_ID', { age: 40 });
+`superquery` is released under the MIT License.
 ```
 
----
-
-### `delete(id: string): Promise<{ error: string }>`
-
-- Deletes a document from the collection.
-
-#### Parameters
-- `id` (string): ID of the document to delete.
-
-#### Returns
-- `Promise<{ error: string }>`: Returns an error message if any.
-
-#### Example
-```javascript
-await firebaseQuery.delete("collections",'USER_ID');
-```
-
----
-
-### `getById(id: string): Promise<{ data: Object, error: string }>`
-
-- Retrieves a document by its ID.
-
-#### Parameters
-- `id` (string): ID of the document to retrieve.
-
-#### Returns
-- `Promise<{ data: Object, error: string }>`: Returns the document data or error.
-
-#### Example
-```javascript
-const { data, error } = await firebaseQuery.select("collection").getById('USER_ID');
-```
-
----
-
-This concludes the documentation for the `FirebaseQuery` class, providing an overview of its methods along with code examples demonstrating their usage.
+You can customize this `README.md` file to fit your specific needs and add more examples if necessary.
