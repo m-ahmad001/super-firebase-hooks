@@ -21,9 +21,12 @@ const firebaseConfig = {
   // your Firebase config here
 };
 
-const superquery = new FirestoreWrapper(firebaseConfig);
+import FirebaseQuery from "./FirebaseQuery";
+import { DB } from "./config";
 
-export default superquery;
+const firebase = new FirebaseQuery(DB);
+
+export default firebase;
 ```
 
 ## Usage
