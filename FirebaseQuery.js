@@ -1,5 +1,6 @@
 import {
   addDoc,
+  setDoc,
   collection,
   deleteDoc,
   doc,
@@ -67,11 +68,18 @@ class FirebaseQuery {
   /**
    * Method to insert a new document into the collection
    * @param {Object} data - Data to be inserted
+   * @param {string} [id] - Optional ID of the document
    * @returns {Promise<{id: string, error: string}>} - Returns the inserted document ID or error
    */
-  async insert(data) {
+  async insert(data, id) {
     try {
-      const docRef = await addDoc(this.firestoreCollection, data);
+      let docRef;
+      if (id) {
+        docRef = doc(this.firestoreCollection, id);
+        await setDoc(docRef, data);
+      } else {
+        docRef = await addDoc(this.firestoreCollection, data);
+      }
       return { id: docRef.id };
     } catch (error) {
       return { error: error.message };
@@ -151,57 +159,5 @@ class FirebaseQuery {
     }
   }
 }
-// (async () => {
-//   try {
-//     // Query: SELECT * FROM countries WHERE name = 'Albania'
-//     const { data: countriesData, error: countriesError } = await new FirebaseQuery('countries')
-//       .select()
-//       .where('name', '==', 'Albania')
-//       .get();
-
-//     console.log('Countries Data:', countriesData);
-//     if (countriesError) console.error('Countries Error:', countriesError);
-
-//     // Query: SELECT * FROM countries WHERE population > 1000000
-//     const { data: populousCountriesData, error: populousCountriesError } = await new FirebaseQuery(
-//       'countries'
-//     )
-//       .select()
-//       .where('population', '>', 1000000)
-//       .get();
-
-//     console.log('Populous Countries Data:', populousCountriesData);
-//     if (populousCountriesError) console.error('Populous Countries Error:', populousCountriesError);
-
-//     // Query: SELECT id, name FROM countries WHERE continent = 'Europe' AND population > 5000000
-//     const { data: europeanBigCountriesData, error: europeanBigCountriesError } =
-//       await new FirebaseQuery('countries')
-//         .select(['id', 'name'])
-//         .where('continent', '==', 'Europe')
-//         .where('population', '>', 5000000)
-//         .get();
-
-//     console.log('European Big Countries Data:', europeanBigCountriesData);
-//     if (europeanBigCountriesError)
-//       console.error('European Big Countries Error:', europeanBigCountriesError);
-
-//     // Insert: INSERT INTO countries (name, population) VALUES ('Germany', 83000000)
-//     const { id: germanyId, error: germanyError } = await new FirebaseQuery('countries').insert({
-//       name: 'Germany',
-//       population: 83000000,
-//     });
-
-//     console.log('Germany ID:', germanyId);
-//     if (germanyError) console.error('Germany Insert Error:', germanyError);
-
-//     // Update: UPDATE countries SET population = 85000000 WHERE id = germanyId
-//     await new FirebaseQuery('countries').update(germanyId, { population: 85000000 });
-
-//     // Delete: DELETE FROM countries WHERE id = germanyId
-//     await new FirebaseQuery('countries').delete(germanyId);
-//   } catch (error) {
-//     console.error('Error:', error);
-//   }
-// })();
 
 export default FirebaseQuery;

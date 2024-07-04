@@ -84,7 +84,18 @@ const { error } = await firebase.select("users").insert({ name: "Ahmad" });
 console.log(error);
 ```
 
-### Insert a document
+Insert a new document into the `users` collection with id:
+
+```javascript
+import firebase from "./firebase";
+
+const { error } = await firebase
+  .select("users")
+  .insert({ name: "Ahmad" }, "docId");
+console.log(error);
+```
+
+### Insert many document
 
 Insert a new document into the `users` collection:
 
