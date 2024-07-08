@@ -136,6 +136,8 @@ console.log(error);
 
 `super-firebase-hooks` is released under the MIT License.
 
-```
+## Github Repo for open source contribute
 
+```
+https://github.com/m-ahmad001/super-firebase-hooks
 ```
