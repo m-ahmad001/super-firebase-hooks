@@ -3,15 +3,13 @@
 
 `super-firebase-hook` is a simple wrapper around Firebase Firestore SDK version 9 that provides a chainable API for performing CRUD operations.
 
-## Installation
 
 ```
+## Installation
 1. Install Firebase SDK version 9 in your project:
-
-npm install firebase@9
-
-npm install super-firebase-hooks
-
+```javascript
+npm install firebase super-firebase-hooks
+```
 2. Create a new file named `firebase.js` and import the `FirebaseQuery` wrapper. Initialize it with your Firebase configuration and export it:
 
 ```javascript
