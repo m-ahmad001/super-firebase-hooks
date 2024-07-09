@@ -5,15 +5,15 @@
 
 ## Installation
 
-1. Install Firebase SDK version 9 in your project:
 ```
+1. Install Firebase SDK version 9 in your project:
 
 npm install firebase@9
 
 npm install super-firebase-hooks
 
-````
 2. Create a new file named `firebase.js` and import the `FirebaseQuery` wrapper. Initialize it with your Firebase configuration and export it:
+
 ```javascript
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, query, where, getDocs, addDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
