@@ -1,6 +1,6 @@
 {
   "name": "super-firebase-hooks",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "homepage": "https://github.com/m-ahmad001/super-firebase-hooks",
   "description": "Its simple firebase query , that inspired by sql like syntax, easy to remember and use",
   "main": "FirebaseQuery.js",
