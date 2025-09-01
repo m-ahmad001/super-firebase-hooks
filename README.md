@@ -139,3 +139,6 @@ console.log(error);
 ```
 https://github.com/m-ahmad001/super-firebase-hooks
 ```
+
+
+<!-- Security scan triggered at 2025-09-02 00:24:32 -->
